@@ -270,8 +270,8 @@ function renderNote(note, showDragHandle) {
     <div class="note-card ${isExpanded ? 'expanded' : 'collapsed'}" data-note-id="${note.id}" data-section-id="${note.sectionId}">
       <div class="note-header">
         ${showDragHandle ? '<span class="drag-handle note-drag" title="Réorganiser la note">⠿</span>' : ''}
-        <span class="note-title-display">${titleDisplay}</span>
-        <span class="note-date">${date}</span>
+        ${!isExpanded ? `<span class="note-title-display">${titleDisplay}</span>` : ''}
+        <span class="note-date${isExpanded ? ' note-date-expand' : ''}">${date}</span>
         <div class="note-actions">
           <button class="btn-icon btn-toggle-note" data-note-id="${note.id}" title="${isExpanded ? 'Réduire' : 'Étendre'}">
             ${isExpanded ? '▲' : '▼'}
@@ -389,11 +389,6 @@ function attachSectionContentHandlers(section) {
       const title = e.target.value;
       const note = allNotes.find(n => n.id === noteId);
       if (note) note.title = title;
-
-      // Update header display
-      const card = e.target.closest('.note-card');
-      const display = card?.querySelector('.note-title-display');
-      if (display) display.innerHTML = title ? escapeHtml(title) : '<em>Sans titre</em>';
 
       scheduleNoteSave(noteId, { title });
     });

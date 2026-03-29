@@ -1390,6 +1390,10 @@ textarea.field-input:focus {
   color: var(--text-muted);
 }
 
+.note-date-expand {
+  flex: 1;
+}
+
 .note-actions {
   display: flex;
   align-items: center;
