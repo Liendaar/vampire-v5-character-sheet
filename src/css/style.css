@@ -1,0 +1,1181 @@
+/* ============================================
+   Vampire: La Mascarade V5 — Theme Gothic
+   ============================================ */
+
+:root {
+  --bg-body: #0a0a0a;
+  --bg-surface: #141414;
+  --bg-card: #1c1c1c;
+  --bg-input: #111;
+  --bg-hover: #252525;
+  --accent: #8b0000;
+  --accent-light: #b22222;
+  --accent-dark: #5c0000;
+  --accent-glow: rgba(139, 0, 0, 0.3);
+  --gold: #c9a96e;
+  --gold-dim: rgba(201, 169, 110, 0.15);
+  --text: #ddd;
+  --text-secondary: #888;
+  --text-muted: #555;
+  --border: #2a2a2a;
+  --border-light: #333;
+  --danger: #cc3333;
+  --success: #2d8a4e;
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Crimson Text', serif;
+  --radius: 6px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  --transition: 0.2s ease;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-body);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+
+/* ============================================
+   Navbar
+   ============================================ */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--accent-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-user {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.btn {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  padding: 8px 20px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent-light);
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-light);
+}
+
+.btn-small {
+  font-size: 0.7rem;
+  padding: 5px 12px;
+}
+
+.btn-danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-gold {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-gold:hover {
+  background: var(--gold);
+  color: #000;
+}
+
+/* ============================================
+   Login Page
+   ============================================ */
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(139, 0, 0, 0.12) 0%, transparent 60%),
+    var(--bg-body);
+}
+
+.login-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+.login-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  color: var(--gold);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.login-desc {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+
+.login-separator {
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+  margin: 0 auto 32px;
+}
+
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 32px;
+  background: #fff;
+  color: #333;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-google:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-google svg {
+  width: 20px;
+  height: 20px;
+}
+
+.login-error {
+  margin-top: 16px;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+/* ============================================
+   Dashboard
+   ============================================ */
+
+.dashboard {
+  padding: 80px 24px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.characters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.character-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.character-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.character-card:hover {
+  border-color: var(--accent-dark);
+  box-shadow: 0 4px 20px rgba(139, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.character-card:hover::before {
+  opacity: 1;
+}
+
+.card-name {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.card-detail {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.card-detail span {
+  color: var(--gold);
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+.card-new {
+  border: 2px dashed var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+}
+
+.card-new:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}
+
+.card-new-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state p {
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+/* ============================================
+   Character Sheet
+   ============================================ */
+
+.sheet-page {
+  padding: 72px 16px 60px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.sheet-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sheet-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.save-status {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.save-status.saving {
+  color: var(--gold);
+}
+
+.save-status.saved {
+  color: var(--success);
+}
+
+.save-status.error {
+  color: var(--danger);
+}
+
+.sheet {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sheet-header {
+  background: linear-gradient(135deg, var(--accent-dark), #2a0000);
+  padding: 24px 28px 20px;
+  text-align: center;
+  border-bottom: 2px solid var(--accent);
+}
+
+.sheet-header h1 {
+  font-size: 1.8rem;
+  color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 2px;
+}
+
+.sheet-header-sub {
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  color: var(--gold);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+}
+
+/* Sections */
+
+.sheet-section {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-section:last-child {
+  border-bottom: none;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent-light);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title-gold {
+  color: var(--gold);
+  border-bottom-color: var(--gold-dim);
+}
+
+/* Info Grid */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 20px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-heading);
+}
+
+.field-input {
+  background: var(--bg-input);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 4px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color var(--transition);
+  width: 100%;
+}
+
+.field-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.field-input::placeholder {
+  color: var(--text-muted);
+}
+
+textarea.field-input {
+  resize: vertical;
+  min-height: 60px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+}
+
+textarea.field-input:focus {
+  border-color: var(--accent);
+}
+
+/* ============================================
+   Attributes
+   ============================================ */
+
+.attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 32px;
+}
+
+.attr-category {
+  text-align: center;
+}
+
+.attr-category-title {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.attr-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  gap: 8px;
+}
+
+.attr-name {
+  font-size: 0.9rem;
+  color: var(--text);
+  min-width: 90px;
+  text-align: left;
+}
+
+/* ============================================
+   Dot Ratings
+   ============================================ */
+
+.dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.dot:hover {
+  border-color: var(--accent-light);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.dot.filled {
+  background: var(--accent);
+  border-color: var(--accent-light);
+}
+
+.dot.filled:hover {
+  background: var(--accent-light);
+}
+
+/* Small dots for compact layouts */
+.dots-small .dot {
+  width: 14px;
+  height: 14px;
+  border-width: 1.5px;
+}
+
+/* ============================================
+   Health & Willpower Trackers
+   ============================================ */
+
+.trackers-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.tracker-group {
+  text-align: center;
+}
+
+.tracker-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.tracker {
+  display: inline-flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tracker-box {
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--border-light);
+  background: var(--bg-input);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all var(--transition);
+  color: transparent;
+  user-select: none;
+}
+
+.tracker-box:hover {
+  border-color: var(--accent);
+}
+
+.tracker-box.superficial {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.tracker-box.superficial::after {
+  content: '/';
+}
+
+.tracker-box.aggravated {
+  color: var(--accent-light);
+  border-color: var(--accent-light);
+  background: rgba(139, 0, 0, 0.15);
+}
+
+.tracker-box.aggravated::after {
+  content: '\2715';
+}
+
+.tracker-spacer {
+  width: 6px;
+}
+
+/* ============================================
+   Skills / Competences
+   ============================================ */
+
+.competences-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 32px;
+}
+
+.comp-category-title {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-align: center;
+  font-style: italic;
+  grid-column: 1 / -1;
+}
+
+.comp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+  gap: 6px;
+}
+
+.comp-name {
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================
+   Disciplines
+   ============================================ */
+
+.disciplines-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.discipline-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.discipline-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.discipline-name {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  letter-spacing: 0.05em;
+}
+
+.discipline-name:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.discipline-name::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.discipline-powers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.discipline-power-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: 3px 4px;
+  width: 100%;
+}
+
+.discipline-power-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+  color: var(--text);
+}
+
+.discipline-power-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Resonance / Soif / Humanité
+   ============================================ */
+
+.rsh-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.rsh-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rsh-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.resonance-input {
+  flex: 1;
+  max-width: 200px;
+}
+
+/* ============================================
+   Page 2 - Principes, Attaches, Fléau
+   ============================================ */
+
+.three-col-text {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.text-block-label {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.text-block textarea {
+  min-height: 100px;
+}
+
+/* ============================================
+   Avantages & Handicaps
+   ============================================ */
+
+.advantages-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.adv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adv-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adv-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 4px;
+}
+
+.adv-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.adv-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Puissance du Sang
+   ============================================ */
+
+.blood-potency-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bp-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.bp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bp-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  min-width: 140px;
+}
+
+.bp-value {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 2px 4px;
+}
+
+.bp-value:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+/* ============================================
+   Experience
+   ============================================ */
+
+.xp-row {
+  display: flex;
+  gap: 32px;
+}
+
+.xp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xp-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.xp-value {
+  width: 60px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.xp-value:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ============================================
+   Biography
+   ============================================ */
+
+.bio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+}
+
+.bio-full {
+  grid-column: 1 / -1;
+}
+
+/* ============================================
+   Notes
+   ============================================ */
+
+.notes-textarea {
+  width: 100%;
+  min-height: 120px;
+}
+
+/* ============================================
+   Loading & Utilities
+   ============================================ */
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.loading::after {
+  content: '';
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-left: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Confirm dialog */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.dialog {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.dialog h3 {
+  margin-bottom: 12px;
+  color: var(--accent-light);
+}
+
+.dialog p {
+  margin-bottom: 24px;
+  color: var(--text-secondary);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dark);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .info-grid,
+  .attributes-grid,
+  .competences-grid,
+  .disciplines-grid,
+  .three-col-text {
+    grid-template-columns: 1fr;
+  }
+
+  .trackers-row,
+  .advantages-section,
+  .bp-grid,
+  .bio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rsh-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .sheet-section {
+    padding: 16px 16px;
+  }
+
+  .sheet-header {
+    padding: 20px 16px;
+  }
+
+  .sheet-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .navbar {
+    padding: 0 12px;
+  }
+
+  .navbar-brand {
+    font-size: 0.85rem;
+  }
+
+  .xp-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .characters-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dot {
+    width: 16px;
+    height: 16px;
+  }
+
+  .tracker-box {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
+
+  .attr-name, .comp-name {
+    font-size: 0.8rem;
+  }
+}
