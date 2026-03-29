@@ -1124,46 +1124,113 @@ textarea.field-input:focus {
   margin: 0 auto;
 }
 
-.notes-toolbar {
-  display: flex;
-  justify-content: flex-end;
+/* ── Section Tabs Bar ── */
+
+.section-tabs-bar {
   margin-bottom: 20px;
 }
 
-.sections-container {
+.section-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-/* ── Note Section ── */
+.section-tabs::-webkit-scrollbar {
+  display: none;
+}
 
-.note-section {
+.section-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all var(--transition);
+  user-select: none;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.section-tab:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+}
+
+.section-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.section-tab.dragging {
+  opacity: 0.5;
+}
+
+.section-tab-label {
+  pointer-events: none;
+}
+
+.section-tab-drag {
+  font-size: 0.75rem;
+  opacity: 0.3;
+  transition: opacity var(--transition);
+  padding: 2px;
+}
+
+.section-tab:hover .section-tab-drag {
+  opacity: 0.7;
+}
+
+.section-tab-add {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  padding: 8px 16px;
+  border: none;
+  font-family: var(--font-body);
+}
+
+.section-tab-add:hover {
+  color: var(--gold);
+}
+
+/* ── Section Content ── */
+
+.section-content {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: box-shadow var(--transition);
 }
 
-.note-section.dragging {
-  opacity: 0.5;
-  box-shadow: 0 0 24px var(--accent-glow);
-}
-
-.section-header {
+.section-toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   padding: 12px 16px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
 }
 
-.section-title-input {
+.section-toolbar-left {
   flex: 1;
-  min-width: 120px;
+  min-width: 150px;
+}
+
+.section-rename-input {
+  width: 100%;
   background: transparent;
   border: none;
   border-bottom: 1px solid transparent;
@@ -1176,16 +1243,16 @@ textarea.field-input:focus {
   transition: border-color var(--transition);
 }
 
-.section-title-input:hover {
+.section-rename-input:hover {
   border-bottom-color: var(--border);
 }
 
-.section-title-input:focus {
+.section-rename-input:focus {
   outline: none;
   border-bottom-color: var(--accent);
 }
 
-.section-controls {
+.section-toolbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1276,10 +1343,51 @@ textarea.field-input:focus {
   border-bottom: 1px solid var(--border);
 }
 
+.note-title-display {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-title-display em {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.note-title-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  letter-spacing: 0.03em;
+  transition: border-color var(--transition);
+}
+
+.note-title-input:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+
+.note-title-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-style: italic;
+}
+
 .note-date {
   font-size: 0.75rem;
   color: var(--text-muted);
-  flex: 1;
 }
 
 .note-actions {
@@ -1504,13 +1612,18 @@ textarea.field-input:focus {
     grid-template-columns: 1fr;
   }
 
-  .section-header {
+  .section-toolbar {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .section-controls {
+  .section-toolbar-right {
     width: 100%;
+  }
+
+  .section-tab {
+    padding: 8px 14px;
+    font-size: 0.7rem;
   }
 
   .char-tab {

@@ -83,6 +83,7 @@ export async function createNote(uid, charId, sectionId) {
   const maxOrder = existing.reduce((max, n) => Math.max(max, n.customOrder || 0), 0);
   const ref = await addDoc(notesCol(uid, charId), {
     sectionId,
+    title: '',
     content: '',
     customOrder: maxOrder + 1,
     createdAt: serverTimestamp(),
