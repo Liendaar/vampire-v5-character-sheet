@@ -397,33 +397,39 @@ export async function renderSheet(container, router, charId) {
         <button class="btn btn-small" id="btn-logout">Quitter</button>
       </div>
     </nav>
-    <div class="sheet-page"><div class="loading">Chargement</div></div>
+    <div class="sheet-page">
+      <div class="char-tabs">
+        <a href="#/sheet/${charId}" class="char-tab active">Fiche</a>
+        <a href="#/notes/${charId}" class="char-tab">Notes</a>
+      </div>
+      <div id="sheet-content"><div class="loading">Chargement</div></div>
+    </div>
   `;
 
   document.getElementById('btn-back').addEventListener('click', () => router.navigate('/'));
   document.getElementById('btn-logout').addEventListener('click', () => logout());
 
-  const page = container.querySelector('.sheet-page');
+  const contentEl = document.getElementById('sheet-content');
   let char;
 
   try {
     char = await getCharacter(user.uid, charId);
   } catch (err) {
-    page.innerHTML = `<div class="empty-state"><p>Erreur : ${err.message}</p><button class="btn" id="btn-retry">Retour</button></div>`;
-    page.querySelector('#btn-retry')?.addEventListener('click', () => router.navigate('/'));
+    contentEl.innerHTML = `<div class="empty-state"><p>Erreur : ${err.message}</p><button class="btn" id="btn-retry">Retour</button></div>`;
+    contentEl.querySelector('#btn-retry')?.addEventListener('click', () => router.navigate('/'));
     return;
   }
 
   if (!char) {
-    page.innerHTML = `<div class="empty-state"><p>Personnage introuvable.</p><button class="btn" id="btn-retry">Retour</button></div>`;
-    page.querySelector('#btn-retry')?.addEventListener('click', () => router.navigate('/'));
+    contentEl.innerHTML = `<div class="empty-state"><p>Personnage introuvable.</p><button class="btn" id="btn-retry">Retour</button></div>`;
+    contentEl.querySelector('#btn-retry')?.addEventListener('click', () => router.navigate('/'));
     return;
   }
 
   // Ensure all expected fields exist (migration safety)
   ensureDefaults(char);
 
-  page.innerHTML = `
+  contentEl.innerHTML = `
     <div class="sheet">
       <div class="sheet-header">
         <h1>Vampire</h1>
@@ -467,7 +473,7 @@ export async function renderSheet(container, router, charId) {
   }
 
   // Dot clicks
-  page.addEventListener('click', (e) => {
+  contentEl.addEventListener('click', (e) => {
     const dot = e.target.closest('.dot');
     if (!dot) return;
 
@@ -495,7 +501,7 @@ export async function renderSheet(container, router, charId) {
   });
 
   // Tracker clicks (cycle: empty → superficial → aggravated → empty)
-  page.addEventListener('click', (e) => {
+  contentEl.addEventListener('click', (e) => {
     const box = e.target.closest('.tracker-box');
     if (!box) return;
 
@@ -512,7 +518,7 @@ export async function renderSheet(container, router, charId) {
   });
 
   // Text/number inputs
-  page.addEventListener('input', (e) => {
+  contentEl.addEventListener('input', (e) => {
     const el = e.target;
     const field = el.dataset.field;
     if (!field) return;

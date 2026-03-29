@@ -4,6 +4,7 @@ import { onAuth } from './auth.js';
 import { renderLogin } from './pages/login.js';
 import { renderDashboard } from './pages/dashboard.js';
 import { renderSheet } from './pages/sheet.js';
+import { renderNotesPage } from './pages/notes.js';
 
 const app = document.getElementById('app');
 let router;
@@ -30,6 +31,13 @@ function setupRouter() {
       handler: (params) => {
         if (!currentUser) { router.navigate('/login'); return; }
         renderSheet(app, router, params.id);
+      },
+    },
+    {
+      path: '/notes/:id',
+      handler: (params) => {
+        if (!currentUser) { router.navigate('/login'); return; }
+        renderNotesPage(app, router, params.id);
       },
     },
   ]);
