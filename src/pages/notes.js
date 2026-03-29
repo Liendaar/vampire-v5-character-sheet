@@ -270,8 +270,8 @@ function renderNote(note, showDragHandle) {
     <div class="note-card ${isExpanded ? 'expanded' : 'collapsed'}" data-note-id="${note.id}" data-section-id="${note.sectionId}">
       <div class="note-header">
         ${showDragHandle ? '<span class="drag-handle note-drag" title="Réorganiser la note">⠿</span>' : ''}
-        ${!isExpanded ? `<span class="note-title-display">${titleDisplay}</span>` : ''}
-        <span class="note-date${isExpanded ? ' note-date-expand' : ''}">${date}</span>
+        <input type="text" class="note-title-input" data-note-id="${note.id}" value="${escapeAttr(title)}" placeholder="Sans titre">
+        <span class="note-date">${date}</span>
         <div class="note-actions">
           <button class="btn-icon btn-toggle-note" data-note-id="${note.id}" title="${isExpanded ? 'Réduire' : 'Étendre'}">
             ${isExpanded ? '▲' : '▼'}
@@ -281,7 +281,6 @@ function renderNote(note, showDragHandle) {
       </div>
       ${isExpanded
         ? `<div class="note-content">
-            <input type="text" class="note-title-input" data-note-id="${note.id}" value="${escapeAttr(title)}" placeholder="Titre de la note">
             <textarea class="note-textarea" data-note-id="${note.id}" placeholder="Écrivez votre note...">${escapeHtml(content)}</textarea>
            </div>`
         : `<div class="note-preview" data-note-id="${note.id}">
