@@ -49,6 +49,7 @@ function renderGrid(grid, chars, uid, router) {
   for (const c of chars) {
     html += `
       <div class="character-card" data-id="${c.id}">
+        ${c.portrait ? `<img src="${c.portrait}" alt="" class="card-portrait">` : ''}
         <div class="card-name">${escapeHtml(c.nom || 'Sans nom')}</div>
         <div class="card-detail">Clan : <span>${escapeHtml(c.clan || '—')}</span></div>
         <div class="card-detail">Concept : <span>${escapeHtml(c.concept || '—')}</span></div>

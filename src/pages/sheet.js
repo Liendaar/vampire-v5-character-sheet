@@ -105,6 +105,26 @@ function escapeHtml(str) {
 
 // ─── Section Renderers ──────────────────────────────────
 
+function renderPortrait(c) {
+  const src = c.portrait || '';
+  return `
+    <div class="sheet-section portrait-section">
+      <div class="portrait-wrapper">
+        <div class="portrait" id="portrait-container">
+          ${src
+            ? `<img src="${src}" alt="Portrait" class="portrait-img">`
+            : `<div class="portrait-placeholder">Cliquez pour ajouter<br>un portrait</div>`}
+        </div>
+        <input type="file" id="portrait-input" accept="image/*" class="hidden">
+        <div class="portrait-actions">
+          <button class="btn btn-small btn-gold" id="btn-upload-portrait">Changer</button>
+          ${src ? '<button class="btn btn-small btn-danger" id="btn-remove-portrait">Retirer</button>' : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderInfo(c) {
   return `
     <div class="sheet-section">
@@ -435,6 +455,7 @@ export async function renderSheet(container, router, charId) {
         <h1>Vampire</h1>
         <div class="sheet-header-sub">La Mascarade</div>
       </div>
+      ${renderPortrait(char)}
       ${renderInfo(char)}
       ${renderAttributs(char)}
       ${renderTrackers(char)}
@@ -471,6 +492,53 @@ export async function renderSheet(container, router, charId) {
       }
     }, 1500);
   }
+
+  // ─── Portrait Upload ──────────────────────────────────
+  const portraitInput = document.getElementById('portrait-input');
+  const portraitContainer = document.getElementById('portrait-container');
+
+  portraitContainer.addEventListener('click', () => portraitInput.click());
+  document.getElementById('btn-upload-portrait')?.addEventListener('click', () => portraitInput.click());
+
+  document.getElementById('btn-remove-portrait')?.addEventListener('click', async () => {
+    char.portrait = '';
+    portraitContainer.innerHTML = '<div class="portrait-placeholder">Cliquez pour ajouter<br>un portrait</div>';
+    const removeBtn = document.getElementById('btn-remove-portrait');
+    if (removeBtn) removeBtn.remove();
+    scheduleSave();
+  });
+
+  portraitInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    statusEl.textContent = 'Traitement de l\'image...';
+    statusEl.className = 'save-status saving';
+    try {
+      const base64 = await resizeImage(file, 400, 0.8);
+      char.portrait = base64;
+      portraitContainer.innerHTML = `<img src="${base64}" alt="Portrait" class="portrait-img">`;
+      // Ensure remove button exists
+      const actions = portraitContainer.closest('.portrait-wrapper').querySelector('.portrait-actions');
+      if (!actions.querySelector('#btn-remove-portrait')) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-small btn-danger';
+        btn.id = 'btn-remove-portrait';
+        btn.textContent = 'Retirer';
+        btn.addEventListener('click', async () => {
+          char.portrait = '';
+          portraitContainer.innerHTML = '<div class="portrait-placeholder">Cliquez pour ajouter<br>un portrait</div>';
+          btn.remove();
+          scheduleSave();
+        });
+        actions.appendChild(btn);
+      }
+      scheduleSave();
+    } catch (err) {
+      statusEl.textContent = 'Erreur image';
+      statusEl.className = 'save-status error';
+    }
+    portraitInput.value = '';
+  });
 
   // Dot clicks
   contentEl.addEventListener('click', (e) => {
@@ -603,4 +671,32 @@ function ensureDefaults(char) {
 
   const textFields = ['nom', 'concept', 'predateur', 'chronique', 'ambition', 'clan', 'sire', 'desir', 'generation', 'resonance', 'principesChronique', 'attachesConvictions', 'fleauClan', 'coupDeSang', 'degatsRegeneres', 'bonusPouvoirs', 'relanceExaltation', 'penaliteNourrir', 'scoreFLeau', 'ageVeritable', 'ageApparent', 'dateNaissance', 'dateDeces', 'apparence', 'signesDistinctifs', 'historique', 'notes'];
   for (const f of textFields) char[f] = char[f] || '';
+  char.portrait = char.portrait || '';
+}
+
+function resizeImage(file, maxSize, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        if (width > height) {
+          if (width > maxSize) { height = (height * maxSize) / width; width = maxSize; }
+        } else {
+          if (height > maxSize) { width = (width * maxSize) / height; height = maxSize; }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
