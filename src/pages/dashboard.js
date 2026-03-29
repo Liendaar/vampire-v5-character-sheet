@@ -1,5 +1,5 @@
 import { logout, currentUser } from '../auth.js';
-import { listCharacters, createCharacter, deleteCharacter } from '../db.js';
+import { listCharacters, createCharacter, deleteCharacter, importCharacter } from '../db.js';
 
 export async function renderDashboard(container, router) {
   const user = currentUser();
@@ -16,6 +16,10 @@ export async function renderDashboard(container, router) {
     <div class="dashboard">
       <div class="dashboard-header">
         <h2 class="dashboard-title">Mes Personnages</h2>
+        <div class="dashboard-actions">
+          <button class="btn btn-small btn-gold" id="btn-import">Importer un personnage</button>
+          <input type="file" id="import-input" accept=".json" class="hidden">
+        </div>
       </div>
       <div class="characters-grid" id="chars-grid">
         <div class="loading">Chargement</div>
@@ -24,6 +28,26 @@ export async function renderDashboard(container, router) {
   `;
 
   document.getElementById('btn-logout').addEventListener('click', () => logout());
+
+  const importInput = document.getElementById('import-input');
+  document.getElementById('btn-import').addEventListener('click', () => importInput.click());
+  importInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data.nom && !data.attributs) {
+        alert('Ce fichier ne semble pas être une fiche de personnage valide.');
+        return;
+      }
+      const id = await importCharacter(user.uid, data);
+      router.navigate(`/sheet/${id}`);
+    } catch (err) {
+      alert('Erreur lors de l\'import : ' + err.message);
+    }
+    importInput.value = '';
+  });
 
   const grid = document.getElementById('chars-grid');
 

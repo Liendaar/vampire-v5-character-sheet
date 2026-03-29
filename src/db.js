@@ -122,3 +122,24 @@ export async function saveCharacter(uid, charId, data) {
 export async function deleteCharacter(uid, charId) {
   await deleteDoc(charDoc(uid, charId));
 }
+
+export async function importCharacter(uid, data) {
+  const clean = { ...data };
+  // Remove Firestore metadata
+  delete clean.id;
+  delete clean.createdAt;
+  delete clean.updatedAt;
+  clean.createdAt = serverTimestamp();
+  clean.updatedAt = serverTimestamp();
+  const ref = await addDoc(charsCol(uid), clean);
+  return ref.id;
+}
+
+export function exportCharacter(char) {
+  const data = { ...char };
+  // Remove Firestore-specific fields
+  delete data.id;
+  delete data.createdAt;
+  delete data.updatedAt;
+  return data;
+}

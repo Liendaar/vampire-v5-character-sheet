@@ -1,5 +1,5 @@
 import { currentUser } from '../auth.js';
-import { getCharacter, saveCharacter } from '../db.js';
+import { getCharacter, saveCharacter, exportCharacter } from '../db.js';
 import { logout } from '../auth.js';
 
 // ─── Field Definitions ──────────────────────────────────
@@ -413,6 +413,7 @@ export async function renderSheet(container, router, charId) {
       <a class="navbar-brand" href="#/">Vampire V5</a>
       <div class="navbar-right">
         <span class="save-status" id="save-status"></span>
+        <button class="btn btn-small btn-gold" id="btn-export">Exporter</button>
         <button class="btn btn-small" id="btn-back">Mes personnages</button>
         <button class="btn btn-small" id="btn-logout">Quitter</button>
       </div>
@@ -428,6 +429,18 @@ export async function renderSheet(container, router, charId) {
 
   document.getElementById('btn-back').addEventListener('click', () => router.navigate('/'));
   document.getElementById('btn-logout').addEventListener('click', () => logout());
+  document.getElementById('btn-export').addEventListener('click', () => {
+    if (!char) return;
+    const data = exportCharacter(char);
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(char.nom || 'personnage').replace(/[^a-zA-Z0-9À-ÿ _-]/g, '')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 
   const contentEl = document.getElementById('sheet-content');
   let char;
