@@ -1,5 +1,6 @@
 import { logout, currentUser } from '../auth.js';
 import { listCharacters, createCharacter, deleteCharacter, importCharacter } from '../db.js';
+import { importAllNotes } from '../db-notes.js';
 
 export async function renderDashboard(container, router) {
   const user = currentUser();
@@ -41,7 +42,10 @@ export async function renderDashboard(container, router) {
         alert('Ce fichier ne semble pas être une fiche de personnage valide.');
         return;
       }
-      const id = await importCharacter(user.uid, data);
+      const { id, notesData } = await importCharacter(user.uid, data);
+      if (notesData && notesData.length > 0) {
+        await importAllNotes(user.uid, id, notesData);
+      }
       router.navigate(`/sheet/${id}`);
     } catch (err) {
       alert('Erreur lors de l\'import : ' + err.message);

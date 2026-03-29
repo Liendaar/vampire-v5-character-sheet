@@ -124,20 +124,32 @@ export async function deleteCharacter(uid, charId) {
 }
 
 export async function importCharacter(uid, data) {
+  const notesData = data._notes;
   const clean = { ...data };
-  // Remove Firestore metadata
   delete clean.id;
   delete clean.createdAt;
   delete clean.updatedAt;
+  delete clean._notes;
   clean.createdAt = serverTimestamp();
   clean.updatedAt = serverTimestamp();
   const ref = await addDoc(charsCol(uid), clean);
-  return ref.id;
+  return { id: ref.id, notesData };
 }
 
-export function exportCharacter(char) {
+export async function importToExistingCharacter(uid, charId, data) {
+  const notesData = data._notes;
+  const clean = { ...data };
+  delete clean.id;
+  delete clean.createdAt;
+  delete clean.updatedAt;
+  delete clean._notes;
+  clean.updatedAt = serverTimestamp();
+  await updateDoc(charDoc(uid, charId), clean);
+  return { notesData };
+}
+
+export function cleanForExport(char) {
   const data = { ...char };
-  // Remove Firestore-specific fields
   delete data.id;
   delete data.createdAt;
   delete data.updatedAt;

@@ -110,3 +110,54 @@ export async function reorderNotes(uid, charId, orderedIds) {
   });
   await batch.commit();
 }
+
+// ─── Export / Import ──────────────────────────────────
+
+export async function exportAllNotes(uid, charId) {
+  const sections = await listSections(uid, charId);
+  const allNotes = await listAllNotes(uid, charId);
+
+  return sections.map(s => {
+    const sectionNotes = allNotes
+      .filter(n => n.sectionId === s.id)
+      .map(n => ({
+        title: n.title || '',
+        content: n.content || '',
+        customOrder: n.customOrder || 0,
+      }));
+    return {
+      title: s.title || '',
+      order: s.order || 0,
+      sortMode: s.sortMode || 'chronoDesc',
+      notes: sectionNotes,
+    };
+  });
+}
+
+export async function importAllNotes(uid, charId, sectionsData) {
+  // Delete existing notes and sections
+  const existingSections = await listSections(uid, charId);
+  for (const s of existingSections) {
+    await deleteSection(uid, charId, s.id);
+  }
+
+  // Re-create from import data
+  for (const s of sectionsData) {
+    const sRef = await addDoc(sectionsCol(uid, charId), {
+      title: s.title || '',
+      order: s.order || 0,
+      sortMode: s.sortMode || 'chronoDesc',
+      createdAt: serverTimestamp(),
+    });
+    for (const n of (s.notes || [])) {
+      await addDoc(notesCol(uid, charId), {
+        sectionId: sRef.id,
+        title: n.title || '',
+        content: n.content || '',
+        customOrder: n.customOrder || 0,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  }
+}

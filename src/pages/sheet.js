@@ -1,5 +1,6 @@
 import { currentUser } from '../auth.js';
-import { getCharacter, saveCharacter, exportCharacter } from '../db.js';
+import { getCharacter, saveCharacter, cleanForExport, importToExistingCharacter } from '../db.js';
+import { exportAllNotes, importAllNotes } from '../db-notes.js';
 import { logout } from '../auth.js';
 
 // ─── Field Definitions ──────────────────────────────────
@@ -414,6 +415,8 @@ export async function renderSheet(container, router, charId) {
       <div class="navbar-right">
         <span class="save-status" id="save-status"></span>
         <button class="btn btn-small btn-gold" id="btn-export">Exporter</button>
+        <button class="btn btn-small" id="btn-import-update">Importer</button>
+        <input type="file" id="import-update-input" accept=".json" class="hidden">
         <button class="btn btn-small" id="btn-back">Mes personnages</button>
         <button class="btn btn-small" id="btn-logout">Quitter</button>
       </div>
@@ -429,17 +432,56 @@ export async function renderSheet(container, router, charId) {
 
   document.getElementById('btn-back').addEventListener('click', () => router.navigate('/'));
   document.getElementById('btn-logout').addEventListener('click', () => logout());
-  document.getElementById('btn-export').addEventListener('click', () => {
+  document.getElementById('btn-export').addEventListener('click', async () => {
     if (!char) return;
-    const data = exportCharacter(char);
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${(char.nom || 'personnage').replace(/[^a-zA-Z0-9À-ÿ _-]/g, '')}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const statusEl = document.getElementById('save-status');
+    statusEl.textContent = 'Export en cours...';
+    statusEl.className = 'save-status saving';
+    try {
+      const data = cleanForExport(char);
+      data._notes = await exportAllNotes(user.uid, charId);
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(char.nom || 'personnage').replace(/[^a-zA-Z0-9À-ÿ _-]/g, '')}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      statusEl.textContent = 'Exporté';
+      statusEl.className = 'save-status saved';
+    } catch (err) {
+      statusEl.textContent = 'Erreur export';
+      statusEl.className = 'save-status error';
+    }
+  });
+
+  const importUpdateInput = document.getElementById('import-update-input');
+  document.getElementById('btn-import-update').addEventListener('click', () => importUpdateInput.click());
+  importUpdateInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!confirm('Remplacer les données de ce personnage avec le fichier importé ?')) {
+      importUpdateInput.value = '';
+      return;
+    }
+    const statusEl = document.getElementById('save-status');
+    statusEl.textContent = 'Import en cours...';
+    statusEl.className = 'save-status saving';
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const { notesData } = await importToExistingCharacter(user.uid, charId, data);
+      if (notesData && notesData.length > 0) {
+        await importAllNotes(user.uid, charId, notesData);
+      }
+      // Reload the page to reflect changes
+      renderSheet(container, router, charId);
+    } catch (err) {
+      statusEl.textContent = 'Erreur import : ' + err.message;
+      statusEl.className = 'save-status error';
+    }
+    importUpdateInput.value = '';
   });
 
   const contentEl = document.getElementById('sheet-content');
