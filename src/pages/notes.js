@@ -3,6 +3,7 @@ import {
   listSections, createSection, updateSection, deleteSection, reorderSections,
   listAllNotes, createNote, updateNote, deleteNote, reorderNotes,
 } from '../db-notes.js';
+import { sortNotes, toMs } from '../utils.js';
 
 let uid, charId, router_;
 let sections = [];
@@ -72,27 +73,6 @@ function getNotesForSection(sectionId) {
   const section = sections.find(s => s.id === sectionId);
   const mode = section?.sortMode || 'chronoDesc';
   return sortNotes(sectionNotes, mode);
-}
-
-function sortNotes(notes, mode) {
-  const sorted = [...notes];
-  switch (mode) {
-    case 'chronoDesc':
-      return sorted.sort((a, b) => toMs(b.createdAt) - toMs(a.createdAt));
-    case 'chronoAsc':
-      return sorted.sort((a, b) => toMs(a.createdAt) - toMs(b.createdAt));
-    case 'custom':
-      return sorted.sort((a, b) => (a.customOrder || 0) - (b.customOrder || 0));
-    default:
-      return sorted;
-  }
-}
-
-function toMs(ts) {
-  if (!ts) return 0;
-  if (ts.seconds) return ts.seconds * 1000;
-  if (ts instanceof Date) return ts.getTime();
-  return 0;
 }
 
 // ─── Tabs Bar ──────────────────────────────────

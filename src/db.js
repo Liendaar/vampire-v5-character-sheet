@@ -3,6 +3,8 @@ import {
   serverTimestamp, query, orderBy
 } from 'firebase/firestore';
 import { db } from './firebase.js';
+import { DEFAULT_CHARACTER, cleanForExport } from './utils.js';
+export { DEFAULT_CHARACTER, cleanForExport };
 
 function charsCol(uid) {
   return collection(db, 'users', uid, 'characters');
@@ -11,83 +13,6 @@ function charsCol(uid) {
 function charDoc(uid, charId) {
   return doc(db, 'users', uid, 'characters', charId);
 }
-
-export const DEFAULT_CHARACTER = {
-  nom: 'Nouveau personnage',
-  concept: '',
-  predateur: '',
-  chronique: '',
-  ambition: '',
-  clan: '',
-  sire: '',
-  desir: '',
-  generation: '',
-
-  attributs: {
-    force: 1, dexterite: 1, vigueur: 1,
-    charisme: 1, manipulation: 1, sangFroid: 1,
-    intelligence: 1, astuce: 1, resolution: 1,
-  },
-
-  competences: {
-    armesAfeu: 0, artisanat: 0, athletisme: 0, bagarre: 0,
-    conduite: 0, furtivite: 0, larcin: 0, melee: 0, survie: 0,
-    animaux: 0, commandement: 0, empathie: 0, etiquette: 0,
-    experienceRue: 0, intimidation: 0, persuasion: 0,
-    representation: 0, subterfuge: 0,
-    erudition: 0, finances: 0, investigation: 0, medecine: 0,
-    occultisme: 0, politique: 0, sciences: 0, technologie: 0,
-    vigilance: 0,
-  },
-
-  sante: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  volonte: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-
-  disciplines: [
-    { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] },
-    { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] },
-    { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] },
-    { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] },
-    { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] },
-    { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] },
-  ],
-
-  resonance: '',
-  soif: 0,
-  humanite: 7,
-
-  principesChronique: '',
-  attachesConvictions: '',
-  fleauClan: '',
-
-  avantagesHandicaps: [
-    { nom: '', niveau: 0 }, { nom: '', niveau: 0 }, { nom: '', niveau: 0 },
-    { nom: '', niveau: 0 }, { nom: '', niveau: 0 }, { nom: '', niveau: 0 },
-    { nom: '', niveau: 0 }, { nom: '', niveau: 0 }, { nom: '', niveau: 0 },
-    { nom: '', niveau: 0 }, { nom: '', niveau: 0 },
-  ],
-
-  puissanceSang: 1,
-  coupDeSang: '',
-  degatsRegeneres: '',
-  bonusPouvoirs: '',
-  relanceExaltation: '',
-  penaliteNourrir: '',
-  scoreFLeau: '',
-
-  experienceTotale: 0,
-  experienceDepensee: 0,
-
-  ageVeritable: '',
-  ageApparent: '',
-  dateNaissance: '',
-  dateDeces: '',
-  apparence: '',
-  signesDistinctifs: '',
-  historique: '',
-
-  notes: '',
-};
 
 export async function createCharacter(uid) {
   const data = {
@@ -146,12 +71,4 @@ export async function importToExistingCharacter(uid, charId, data) {
   clean.updatedAt = serverTimestamp();
   await updateDoc(charDoc(uid, charId), clean);
   return { notesData };
-}
-
-export function cleanForExport(char) {
-  const data = { ...char };
-  delete data.id;
-  delete data.createdAt;
-  delete data.updatedAt;
-  return data;
 }
