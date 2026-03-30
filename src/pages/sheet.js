@@ -235,12 +235,16 @@ function renderDisciplines(c) {
     const nameEsc = (d.nom || '').replace(/"/g, '&quot;');
     const ref = getDisciplineByName(d.nom);
 
-    // Build datalist for powers of this discipline (with level prefix)
+    // Build datalist for powers: accessible first (●), then inaccessible (○)
     let powerOptions = '';
     if (ref) {
-      const opts = ref.pouvoirs.map(p =>
-        `<option value="${p.nom}" label="Niv.${p.niveau} — ${p.nom}">`
-      ).join('');
+      const level = d.niveau || 0;
+      const accessible = ref.pouvoirs.filter(p => p.niveau <= level);
+      const locked = ref.pouvoirs.filter(p => p.niveau > level);
+      const opts = [
+        ...accessible.map(p => `<option value="${p.nom}" label="● Niv.${p.niveau} — ${p.nom}">`),
+        ...locked.map(p => `<option value="${p.nom}" label="○ Niv.${p.niveau} — ${p.nom}">`),
+      ].join('');
       powerOptions = `<datalist id="dl-powers-${i}">${opts}</datalist>`;
     }
 
@@ -664,6 +668,14 @@ export async function renderSheet(container, router, charId) {
       const v = parseInt(d.dataset.value);
       d.classList.toggle('filled', v <= newValue);
     });
+
+    // Update power datalist when discipline level changes
+    const discMatch = field.match(/^disciplines\.(\d+)\.niveau$/);
+    if (discMatch) {
+      const idx = parseInt(discMatch[1]);
+      updateDisciplineBlock(contentEl, idx, char.disciplines[idx]);
+    }
+
     scheduleSave();
   });
 
@@ -852,10 +864,16 @@ function updateDisciplineBlock(container, idx, disc) {
   const block = container.querySelectorAll('.discipline-block')[idx];
   if (!block) return;
 
-  // Update or create power datalist
+  // Update or create power datalist (accessible ● / locked ○)
   let dl = block.querySelector(`datalist[id="dl-powers-${idx}"]`);
   if (ref) {
-    const options = ref.pouvoirs.map(p => `<option value="${p.nom}">`).join('');
+    const level = disc.niveau || 0;
+    const accessible = ref.pouvoirs.filter(p => p.niveau <= level);
+    const locked = ref.pouvoirs.filter(p => p.niveau > level);
+    const options = [
+      ...accessible.map(p => `<option value="${p.nom}" label="● Niv.${p.niveau} — ${p.nom}">`),
+      ...locked.map(p => `<option value="${p.nom}" label="○ Niv.${p.niveau} — ${p.nom}">`),
+    ].join('');
     if (dl) {
       dl.innerHTML = options;
     } else {
