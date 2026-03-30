@@ -718,6 +718,34 @@ export async function renderSheet(container, router, charId) {
 
     scheduleSave();
   });
+
+  // ─── Tooltip positioning (fixed, avoids overflow clipping) ────
+  contentEl.addEventListener('mouseenter', (e) => {
+    const wrapper = e.target.closest('.power-wrapper');
+    if (!wrapper) return;
+    const tooltip = wrapper.querySelector('.power-tooltip');
+    if (!tooltip) return;
+    const rect = wrapper.getBoundingClientRect();
+    tooltip.style.display = 'block';
+    tooltip.style.left = rect.left + 'px';
+    tooltip.style.top = (rect.bottom + 4) + 'px';
+    // If tooltip goes off-screen bottom, show above
+    const tipRect = tooltip.getBoundingClientRect();
+    if (tipRect.bottom > window.innerHeight) {
+      tooltip.style.top = (rect.top - tipRect.height - 4) + 'px';
+    }
+    // If tooltip goes off-screen right, shift left
+    if (tipRect.right > window.innerWidth - 8) {
+      tooltip.style.left = (window.innerWidth - tipRect.width - 8) + 'px';
+    }
+  }, true);
+
+  contentEl.addEventListener('mouseleave', (e) => {
+    const wrapper = e.target.closest('.power-wrapper');
+    if (!wrapper) return;
+    const tooltip = wrapper.querySelector('.power-tooltip');
+    if (tooltip) tooltip.style.display = 'none';
+  }, true);
 }
 
 function updateDisciplineBlock(container, idx, disc) {
