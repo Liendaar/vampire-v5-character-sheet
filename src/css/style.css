@@ -437,6 +437,7 @@ h1, h2, h3, h4 {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  max-width: 100%;
 }
 
 .sheet-header {
@@ -501,6 +502,7 @@ h1, h2, h3, h4 {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .field-label {
@@ -556,6 +558,7 @@ textarea.field-input:focus {
 
 .attr-category {
   text-align: center;
+  min-width: 0;
 }
 
 .attr-category-title {
@@ -591,6 +594,7 @@ textarea.field-input:focus {
   display: inline-flex;
   gap: 4px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .dot {
@@ -751,12 +755,14 @@ textarea.field-input:focus {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 12px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .discipline-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
@@ -764,6 +770,7 @@ textarea.field-input:focus {
 
 .discipline-name {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--border);
