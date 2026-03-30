@@ -836,6 +836,23 @@ function showPowerDetail(discName, powerName) {
   // Remove existing overlay if any
   document.querySelector('.power-detail-overlay')?.remove();
 
+  const wikiSlug = ref.id === 'sorcellerie-du-sang' ? 'Blood_Sorcery'
+    : ref.id === 'force-d-ame' ? 'Fortitude'
+    : ref.id === 'alchimie-sang-clair' ? 'Thin-blood_Alchemy'
+    : power.vo.replace(/ /g, '_').replace(/['"]/g, '');
+  const wikiDiscSlug = ref.id === 'sorcellerie-du-sang' ? 'Blood_Sorcery'
+    : ref.id === 'force-d-ame' ? 'Fortitude'
+    : ref.id === 'alchimie-sang-clair' ? 'Thin-blood_Alchemy'
+    : ref.id === 'proteisme' ? 'Protean'
+    : ref.id === 'puissance' ? 'Potence'
+    : ref.id === 'presence' ? 'Presence'
+    : ref.id === 'obscurcissement' ? 'Obfuscate'
+    : ref.id === 'celerite' ? 'Celerity'
+    : ref.id === 'domination' ? 'Dominate'
+    : ref.id === 'animalisme' ? 'Animalism'
+    : ref.nom;
+  const wikiUrl = `https://vtm.paradoxwikis.com/${encodeURIComponent(wikiDiscSlug)}`;
+
   const overlay = document.createElement('div');
   overlay.className = 'power-detail-overlay overlay';
   overlay.innerHTML = `
@@ -847,7 +864,8 @@ function showPowerDetail(discName, powerName) {
       </div>
       <div class="power-detail-vo">${escapeHtml(power.vo)}</div>
       <div class="power-detail-disc">${escapeHtml(ref.nom)}</div>
-      ${power.description ? `<div class="power-detail-desc">${escapeHtml(power.description)}</div>` : ''}
+      ${power.description ? `<div class="power-detail-desc">${power.description}</div>` : ''}
+      <a href="${wikiUrl}" target="_blank" rel="noopener" class="power-detail-wiki">Voir la description complète sur le wiki</a>
     </div>
   `;
   document.body.appendChild(overlay);

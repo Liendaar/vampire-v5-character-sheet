@@ -982,6 +982,23 @@ textarea.field-input:focus {
   background: var(--bg-card);
   border-radius: var(--radius);
   border-left: 3px solid var(--accent);
+  white-space: pre-line;
+}
+
+.power-detail-wiki {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: var(--gold);
+  text-decoration: none;
+  font-family: var(--font-heading);
+  letter-spacing: 0.05em;
+  transition: color var(--transition);
+}
+
+.power-detail-wiki:hover {
+  color: var(--accent-light);
+  text-decoration: underline;
 }
 
 /* ============================================
