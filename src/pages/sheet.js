@@ -235,11 +235,13 @@ function renderDisciplines(c) {
     const nameEsc = (d.nom || '').replace(/"/g, '&quot;');
     const ref = getDisciplineByName(d.nom);
 
-    // Build datalist for powers of this discipline
+    // Build datalist for powers of this discipline (with level prefix)
     let powerOptions = '';
     if (ref) {
-      const uniquePowers = ref.pouvoirs.map(p => `<option value="${p.nom}">`).join('');
-      powerOptions = `<datalist id="dl-powers-${i}">${uniquePowers}</datalist>`;
+      const opts = ref.pouvoirs.map(p =>
+        `<option value="${p.nom}" label="Niv.${p.niveau} — ${p.nom}">`
+      ).join('');
+      powerOptions = `<datalist id="dl-powers-${i}">${opts}</datalist>`;
     }
 
     html += `
@@ -255,8 +257,10 @@ function renderDisciplines(c) {
     for (let j = 0; j < 4; j++) {
       const pEsc = (pouvoirs[j] || '').replace(/"/g, '&quot;');
       const tooltip = getPowerTooltip(d.nom, pouvoirs[j]);
+      const hasDetail = tooltip ? true : false;
       html += `<div class="power-wrapper">
         <input type="text" ${ref ? `list="dl-powers-${i}"` : ''} class="discipline-power-input" data-field="disciplines" data-index="${i}" data-subfield="pouvoirs" data-pindex="${j}" value="${pEsc}" placeholder="Pouvoir ${j + 1}">
+        ${hasDetail ? `<button type="button" class="btn-power-detail" data-disc="${(d.nom || '').replace(/"/g, '&quot;')}" data-power="${pEsc}" title="Détail du pouvoir">ⓘ</button>` : ''}
         ${tooltip ? `<div class="power-tooltip">${tooltip}</div>` : ''}
       </div>`;
     }
@@ -697,11 +701,13 @@ export async function renderSheet(container, router, charId) {
         } else if (el.dataset.subfield === 'pouvoirs') {
           const pIdx = parseInt(el.dataset.pindex);
           char.disciplines[idx].pouvoirs[pIdx] = el.value;
-          // Update tooltip for this power
+          // Update tooltip + detail button for this power
           const wrapper = el.closest('.power-wrapper');
           if (wrapper) {
-            const tip = getPowerTooltip(char.disciplines[idx].nom, el.value);
+            const discNom = char.disciplines[idx].nom;
+            const tip = getPowerTooltip(discNom, el.value);
             let tooltipEl = wrapper.querySelector('.power-tooltip');
+            let detailBtn = wrapper.querySelector('.btn-power-detail');
             if (tip) {
               if (!tooltipEl) {
                 tooltipEl = document.createElement('div');
@@ -709,8 +715,19 @@ export async function renderSheet(container, router, charId) {
                 wrapper.appendChild(tooltipEl);
               }
               tooltipEl.innerHTML = tip;
-            } else if (tooltipEl) {
-              tooltipEl.remove();
+              if (!detailBtn) {
+                detailBtn = document.createElement('button');
+                detailBtn.type = 'button';
+                detailBtn.className = 'btn-power-detail';
+                detailBtn.title = 'Détail du pouvoir';
+                detailBtn.textContent = 'ⓘ';
+                wrapper.insertBefore(detailBtn, tooltipEl);
+              }
+              detailBtn.dataset.disc = discNom;
+              detailBtn.dataset.power = el.value;
+            } else {
+              if (tooltipEl) tooltipEl.remove();
+              if (detailBtn) detailBtn.remove();
             }
           }
         }
@@ -785,6 +802,49 @@ export async function renderSheet(container, router, charId) {
     const tooltip = wrapper.querySelector('.power-tooltip');
     if (tooltip) tooltip.style.display = 'none';
   }, true);
+
+  // ─── Power detail panel ────
+  contentEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-power-detail');
+    if (!btn) return;
+    e.preventDefault();
+    const discName = btn.dataset.disc;
+    const powerName = btn.dataset.power;
+    showPowerDetail(discName, powerName);
+  });
+}
+
+function showPowerDetail(discName, powerName) {
+  if (!discName || !powerName) return;
+  const ref = getDisciplineByName(discName);
+  if (!ref) return;
+  const power = ref.pouvoirs.find(p => p.nom === powerName);
+  if (!power) return;
+
+  // Remove existing overlay if any
+  document.querySelector('.power-detail-overlay')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'power-detail-overlay overlay';
+  overlay.innerHTML = `
+    <div class="power-detail-panel">
+      <div class="power-detail-header">
+        <h3>${escapeHtml(power.nom)}</h3>
+        <span class="power-detail-level">Niveau ${power.niveau}</span>
+        <button class="btn-icon power-detail-close" title="Fermer">✕</button>
+      </div>
+      <div class="power-detail-vo">${escapeHtml(power.vo)}</div>
+      <div class="power-detail-disc">${escapeHtml(ref.nom)}</div>
+      ${power.description ? `<div class="power-detail-desc">${escapeHtml(power.description)}</div>` : ''}
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay || e.target.closest('.power-detail-close')) {
+      overlay.remove();
+    }
+  });
 }
 
 function updateDisciplineBlock(container, idx, disc) {

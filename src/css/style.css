@@ -836,7 +836,7 @@ textarea.field-input:focus {
   color: var(--text-secondary);
   font-family: var(--font-body);
   font-size: 0.82rem;
-  padding: 3px 4px;
+  padding: 3px 24px 3px 4px;
   width: 100%;
 }
 
@@ -880,6 +880,108 @@ textarea.field-input:focus {
 
 .power-tooltip em {
   color: var(--text-secondary);
+}
+
+/* ── Power detail button ── */
+
+.btn-power-detail {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--radius);
+  opacity: 0.4;
+  transition: opacity var(--transition);
+  line-height: 1;
+}
+
+.power-wrapper:hover .btn-power-detail {
+  opacity: 1;
+}
+
+.btn-power-detail:hover {
+  opacity: 1;
+  background: var(--gold-dim);
+}
+
+/* ── Power detail panel (overlay) ── */
+
+.power-detail-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.power-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.power-detail-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--text);
+  flex: 1;
+  margin: 0;
+}
+
+.power-detail-level {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-light);
+  background: rgba(139, 0, 0, 0.2);
+  padding: 3px 10px;
+  border-radius: var(--radius);
+}
+
+.power-detail-close {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.power-detail-close:hover {
+  color: var(--text);
+}
+
+.power-detail-vo {
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.power-detail-disc {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.power-detail-desc {
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--accent);
 }
 
 /* ============================================
