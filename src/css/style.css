@@ -818,6 +818,46 @@ textarea.field-input:focus {
   color: var(--text-muted);
 }
 
+/* ── Power Tooltips ── */
+
+.power-wrapper {
+  position: relative;
+}
+
+.power-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg-body);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text);
+  z-index: 50;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  min-width: 220px;
+  max-width: 320px;
+  white-space: normal;
+}
+
+.power-tooltip strong {
+  color: var(--gold);
+}
+
+.power-tooltip em {
+  color: var(--text-secondary);
+}
+
+.power-wrapper:hover .power-tooltip,
+.power-wrapper:focus-within .power-tooltip {
+  display: block;
+}
+
 /* ============================================
    Resonance / Soif / Humanité
    ============================================ */

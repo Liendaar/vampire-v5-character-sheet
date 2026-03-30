@@ -2,6 +2,7 @@ import { currentUser, logout } from '../auth.js';
 import { getCharacter, saveCharacter, importToExistingCharacter } from '../db.js';
 import { exportAllNotes, importAllNotes } from '../db-notes.js';
 import { getNestedValue, setNestedValue, ensureDefaults, cleanForExport } from '../utils.js';
+import { DISCIPLINES, getDisciplineByName } from '../data/disciplines.js';
 
 // ─── Field Definitions ──────────────────────────────────
 
@@ -215,27 +216,59 @@ function renderCompetences(c) {
 }
 
 function renderDisciplines(c) {
-  let html = '<div class="sheet-section"><div class="section-title">Disciplines</div><div class="disciplines-grid">';
+  // Build datalist for discipline names
+  const discOptions = DISCIPLINES.map(d => `<option value="${d.nom}">`).join('');
+
+  let html = `<div class="sheet-section"><div class="section-title">Disciplines</div>
+    <datalist id="dl-disciplines">${discOptions}</datalist>
+    <div class="disciplines-grid">`;
+
   for (let i = 0; i < 6; i++) {
     const d = c.disciplines[i] || { nom: '', niveau: 0, pouvoirs: ['', '', '', ''] };
     const nameEsc = (d.nom || '').replace(/"/g, '&quot;');
+    const ref = getDisciplineByName(d.nom);
+
+    // Build datalist for powers of this discipline
+    let powerOptions = '';
+    if (ref) {
+      const uniquePowers = ref.pouvoirs.map(p => `<option value="${p.nom}">`).join('');
+      powerOptions = `<datalist id="dl-powers-${i}">${uniquePowers}</datalist>`;
+    }
+
     html += `
       <div class="discipline-block">
         <div class="discipline-header">
-          <input type="text" class="discipline-name" data-field="disciplines" data-index="${i}" data-subfield="nom" value="${nameEsc}" placeholder="Discipline">
+          <input type="text" list="dl-disciplines" class="discipline-name" data-field="disciplines" data-index="${i}" data-subfield="nom" value="${nameEsc}" placeholder="Discipline">
           ${dots(`disciplines.${i}.niveau`, d.niveau)}
         </div>
+        ${powerOptions}
         <div class="discipline-powers">
     `;
     const pouvoirs = d.pouvoirs || ['', '', '', ''];
     for (let j = 0; j < 4; j++) {
       const pEsc = (pouvoirs[j] || '').replace(/"/g, '&quot;');
-      html += `<input type="text" class="discipline-power-input" data-field="disciplines" data-index="${i}" data-subfield="pouvoirs" data-pindex="${j}" value="${pEsc}" placeholder="Pouvoir ${j + 1}">`;
+      const tooltip = getPowerTooltip(d.nom, pouvoirs[j]);
+      html += `<div class="power-wrapper">
+        <input type="text" ${ref ? `list="dl-powers-${i}"` : ''} class="discipline-power-input" data-field="disciplines" data-index="${i}" data-subfield="pouvoirs" data-pindex="${j}" value="${pEsc}" placeholder="Pouvoir ${j + 1}">
+        ${tooltip ? `<div class="power-tooltip">${tooltip}</div>` : ''}
+      </div>`;
     }
     html += '</div></div>';
   }
   html += '</div></div>';
   return html;
+}
+
+function getPowerTooltip(disciplineName, powerName) {
+  if (!disciplineName || !powerName) return '';
+  const ref = getDisciplineByName(disciplineName);
+  if (!ref) return '';
+  const power = ref.pouvoirs.find(p => p.nom === powerName);
+  if (!power) return '';
+  let tip = `<strong>Niv. ${power.niveau}</strong>`;
+  if (power.vo) tip += ` — <em>${power.vo}</em>`;
+  if (power.description) tip += `<br>${power.description}`;
+  return tip;
 }
 
 function renderResonanceSoifHumanite(c) {
@@ -652,9 +685,27 @@ export async function renderSheet(container, router, charId) {
       if (field === 'disciplines') {
         if (el.dataset.subfield === 'nom') {
           char.disciplines[idx].nom = el.value;
+          // Update power datalist and tooltips for this discipline block
+          updateDisciplineBlock(contentEl, idx, char.disciplines[idx]);
         } else if (el.dataset.subfield === 'pouvoirs') {
           const pIdx = parseInt(el.dataset.pindex);
           char.disciplines[idx].pouvoirs[pIdx] = el.value;
+          // Update tooltip for this power
+          const wrapper = el.closest('.power-wrapper');
+          if (wrapper) {
+            const tip = getPowerTooltip(char.disciplines[idx].nom, el.value);
+            let tooltipEl = wrapper.querySelector('.power-tooltip');
+            if (tip) {
+              if (!tooltipEl) {
+                tooltipEl = document.createElement('div');
+                tooltipEl.className = 'power-tooltip';
+                wrapper.appendChild(tooltipEl);
+              }
+              tooltipEl.innerHTML = tip;
+            } else if (tooltipEl) {
+              tooltipEl.remove();
+            }
+          }
         }
       } else if (field === 'avantagesHandicaps') {
         char.avantagesHandicaps[idx].nom = el.value;
@@ -666,6 +717,53 @@ export async function renderSheet(container, router, charId) {
     }
 
     scheduleSave();
+  });
+}
+
+function updateDisciplineBlock(container, idx, disc) {
+  const ref = getDisciplineByName(disc.nom);
+  const block = container.querySelectorAll('.discipline-block')[idx];
+  if (!block) return;
+
+  // Update or create power datalist
+  let dl = block.querySelector(`datalist[id="dl-powers-${idx}"]`);
+  if (ref) {
+    const options = ref.pouvoirs.map(p => `<option value="${p.nom}">`).join('');
+    if (dl) {
+      dl.innerHTML = options;
+    } else {
+      dl = document.createElement('datalist');
+      dl.id = `dl-powers-${idx}`;
+      dl.innerHTML = options;
+      block.insertBefore(dl, block.querySelector('.discipline-powers'));
+    }
+    // Bind datalist to inputs
+    block.querySelectorAll('.discipline-power-input').forEach(inp => {
+      inp.setAttribute('list', `dl-powers-${idx}`);
+    });
+  } else if (dl) {
+    dl.remove();
+    block.querySelectorAll('.discipline-power-input').forEach(inp => {
+      inp.removeAttribute('list');
+    });
+  }
+
+  // Update tooltips
+  block.querySelectorAll('.power-wrapper').forEach(wrapper => {
+    const inp = wrapper.querySelector('.discipline-power-input');
+    if (!inp) return;
+    const tip = getPowerTooltip(disc.nom, inp.value);
+    let tooltipEl = wrapper.querySelector('.power-tooltip');
+    if (tip) {
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.className = 'power-tooltip';
+        wrapper.appendChild(tooltipEl);
+      }
+      tooltipEl.innerHTML = tip;
+    } else if (tooltipEl) {
+      tooltipEl.remove();
+    }
   });
 }
 
