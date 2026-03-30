@@ -505,6 +505,38 @@ h1, h2, h3, h4 {
   min-width: 0;
 }
 
+.clan-field-group {
+  position: relative;
+}
+
+.clan-tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--bg-body);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text);
+  z-index: 50;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  min-width: 250px;
+  max-width: 350px;
+  white-space: normal;
+}
+
+.clan-tooltip strong {
+  color: var(--accent-light);
+}
+
+.clan-field-group:hover .clan-tooltip,
+.clan-field-group:focus-within .clan-tooltip {
+  display: block;
+}
+
 .field-label {
   font-size: 0.75rem;
   color: var(--text-muted);

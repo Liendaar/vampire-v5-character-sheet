@@ -3,6 +3,7 @@ import { getCharacter, saveCharacter, importToExistingCharacter } from '../db.js
 import { exportAllNotes, importAllNotes } from '../db-notes.js';
 import { getNestedValue, setNestedValue, ensureDefaults, cleanForExport } from '../utils.js';
 import { DISCIPLINES, getDisciplineByName } from '../data/disciplines.js';
+import { CLANS, getClanDisciplines } from '../data/clans.js';
 
 // ─── Field Definitions ──────────────────────────────────
 
@@ -128,8 +129,13 @@ function renderPortrait(c) {
 }
 
 function renderInfo(c) {
+  const clanOptions = CLANS.map(cl => `<option value="${cl.nom}">`).join('');
+  const clanRef = CLANS.find(cl => cl.nom === c.clan);
+  const clanTooltip = clanRef ? `<div class="clan-tooltip">${escapeHtml(clanRef.description)}<br><strong>Fléau :</strong> ${escapeHtml(clanRef.fleau)}</div>` : '';
+
   return `
     <div class="sheet-section">
+      <datalist id="dl-clans">${clanOptions}</datalist>
       <div class="info-grid">
         <div class="field-group">
           <label class="field-label">Nom</label>
@@ -151,9 +157,10 @@ function renderInfo(c) {
           <label class="field-label">Ambition</label>
           ${textField('ambition', c.ambition, 'Ambition')}
         </div>
-        <div class="field-group">
+        <div class="field-group clan-field-group">
           <label class="field-label">Clan</label>
-          ${textField('clan', c.clan, 'Clan')}
+          <input type="text" list="dl-clans" class="field-input" data-field="clan" value="${(c.clan || '').replace(/"/g, '&quot;')}" placeholder="Clan" id="clan-input">
+          ${clanTooltip}
         </div>
         <div class="field-group">
           <label class="field-label">Sire</label>
@@ -714,6 +721,38 @@ export async function renderSheet(container, router, charId) {
       setNestedValue(char, field, parseInt(el.value) || 0);
     } else {
       setNestedValue(char, field, el.value);
+
+      // Auto-fill disciplines when clan changes
+      if (field === 'clan') {
+        const clanDiscs = getClanDisciplines(el.value);
+        if (clanDiscs.length > 0) {
+          // Only fill empty discipline slots
+          const allEmpty = char.disciplines.every(d => !d.nom);
+          if (allEmpty) {
+            for (let i = 0; i < clanDiscs.length && i < 6; i++) {
+              char.disciplines[i].nom = clanDiscs[i];
+            }
+            // Re-render disciplines section
+            const discSection = contentEl.querySelector('.disciplines-grid')?.closest('.sheet-section');
+            if (discSection) {
+              discSection.outerHTML = renderDisciplines(char);
+            }
+          }
+        }
+        // Update clan tooltip
+        const clanGroup = el.closest('.clan-field-group');
+        if (clanGroup) {
+          const oldTip = clanGroup.querySelector('.clan-tooltip');
+          if (oldTip) oldTip.remove();
+          const clanRef = CLANS.find(cl => cl.nom === el.value);
+          if (clanRef) {
+            const tipEl = document.createElement('div');
+            tipEl.className = 'clan-tooltip';
+            tipEl.innerHTML = `${escapeHtml(clanRef.description)}<br><strong>Fléau :</strong> ${escapeHtml(clanRef.fleau)}`;
+            clanGroup.appendChild(tipEl);
+          }
+        }
+      }
     }
 
     scheduleSave();
