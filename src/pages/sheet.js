@@ -45,7 +45,7 @@ const COMPETENCES = {
     { key: 'experienceRue', label: 'Expérience de la rue' },
     { key: 'intimidation', label: 'Intimidation' },
     { key: 'persuasion', label: 'Persuasion' },
-    { key: 'representation', label: 'Représentation' },
+    { key: 'representation', label: 'Performance' },
     { key: 'subterfuge', label: 'Subterfuge' },
   ],
   mental: [
@@ -846,7 +846,7 @@ function showPowerDetail(discName, powerName) {
     : ref.id === 'proteisme' ? 'Protean'
     : ref.id === 'puissance' ? 'Potence'
     : ref.id === 'presence' ? 'Presence'
-    : ref.id === 'obscurcissement' ? 'Obfuscate'
+    : ref.id === 'occultation' ? 'Obfuscate'
     : ref.id === 'celerite' ? 'Celerity'
     : ref.id === 'domination' ? 'Dominate'
     : ref.id === 'animalisme' ? 'Animalism'

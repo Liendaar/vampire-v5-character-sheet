@@ -49,7 +49,7 @@ describe('DISCIPLINES référentiel', () => {
     const names = DISCIPLINES.map(d => d.nom);
     const expected = [
       'Animalisme', 'Auspex', 'Sorcellerie du Sang', 'Célérité',
-      'Domination', "Force d'Âme", 'Obscurcissement', 'Oblivion',
+      'Domination', "Force d'Âme", 'Occultation', 'Oblivion',
       'Puissance', 'Présence', 'Protéisme', 'Alchimie des Sang-Clairs',
     ];
     for (const name of expected) {
