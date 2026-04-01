@@ -4,6 +4,7 @@ import { exportAllNotes, importAllNotes } from '../db-notes.js';
 import { getNestedValue, setNestedValue, ensureDefaults, cleanForExport } from '../utils.js';
 import { DISCIPLINES, getDisciplineByName } from '../data/disciplines.js';
 import { CLANS, getClanDisciplines } from '../data/clans.js';
+import { ATTRIBUTE_LEVELS, SKILL_LEVELS } from '../data/levels.js';
 
 // ─── Field Definitions ──────────────────────────────────
 
@@ -179,12 +180,19 @@ function renderInfo(c) {
   `;
 }
 
+function levelTooltip(levels, key, value) {
+  const desc = levels[key]?.[value];
+  return desc || '';
+}
+
 function renderAttributs(c) {
   let html = '<div class="sheet-section"><div class="section-title">Attributs</div><div class="attributes-grid">';
   for (const [cat, attrs] of Object.entries(ATTRIBUTS)) {
     html += `<div class="attr-category"><div class="attr-category-title">${CATEGORY_LABELS[cat]}</div>`;
     for (const a of attrs) {
-      html += `<div class="attr-row"><span class="attr-name">${a.label}</span>${dots('attributs.' + a.key, c.attributs[a.key])}</div>`;
+      const val = c.attributs[a.key];
+      const tip = levelTooltip(ATTRIBUTE_LEVELS, a.key, val);
+      html += `<div class="attr-row has-level-tooltip" data-level-key="${a.key}" data-level-type="attribut" data-level-tooltip="${tip.replace(/"/g, '&quot;')}"><span class="attr-name">${a.label}</span>${dots('attributs.' + a.key, val)}</div>`;
     }
     html += '</div>';
   }
@@ -214,7 +222,9 @@ function renderCompetences(c) {
   for (const [cat, comps] of Object.entries(COMPETENCES)) {
     html += `<div><div class="attr-category-title">${CATEGORY_LABELS[cat]}</div>`;
     for (const s of comps) {
-      html += `<div class="comp-row"><span class="comp-name">${s.label}</span>${dots('competences.' + s.key, c.competences[s.key])}</div>`;
+      const val = c.competences[s.key];
+      const tip = levelTooltip(SKILL_LEVELS, s.key, val);
+      html += `<div class="comp-row has-level-tooltip" data-level-key="${s.key}" data-level-type="competence" data-level-tooltip="${tip.replace(/"/g, '&quot;')}"><span class="comp-name">${s.label}</span>${dots('competences.' + s.key, val)}</div>`;
     }
     html += '</div>';
   }
@@ -668,6 +678,13 @@ export async function renderSheet(container, router, charId) {
       const v = parseInt(d.dataset.value);
       d.classList.toggle('filled', v <= newValue);
     });
+
+    // Update level tooltip
+    const tooltipRow = dotsContainer.closest('.has-level-tooltip');
+    if (tooltipRow) {
+      const levels = tooltipRow.dataset.levelType === 'attribut' ? ATTRIBUTE_LEVELS : SKILL_LEVELS;
+      tooltipRow.dataset.levelTooltip = levelTooltip(levels, tooltipRow.dataset.levelKey, newValue);
+    }
 
     // Update power datalist when discipline level changes
     const discMatch = field.match(/^disciplines\.(\d+)\.niveau$/);

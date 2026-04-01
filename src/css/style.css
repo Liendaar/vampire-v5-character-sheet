@@ -773,6 +773,41 @@ textarea.field-input:focus {
 }
 
 /* ============================================
+   Level Tooltips (Attributes & Skills)
+   ============================================ */
+
+.has-level-tooltip {
+  position: relative;
+}
+
+.has-level-tooltip[data-level-tooltip]:not([data-level-tooltip=""])::after {
+  content: attr(data-level-tooltip);
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-body);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text);
+  z-index: 60;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  min-width: 220px;
+  max-width: 340px;
+  white-space: normal;
+  text-align: center;
+  pointer-events: none;
+}
+
+.has-level-tooltip[data-level-tooltip]:not([data-level-tooltip=""]):hover::after {
+  display: block;
+}
+
+/* ============================================
    Disciplines
    ============================================ */
 
